@@ -1,0 +1,41 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.x
+    commands:
+      - echo Installing dependencies...
+      - pip install -r requirements.txt
+      - pip install pylint
+  pre_build:
+    commands:
+      - echo Running tests...
+      - python main_test.py
+      - echo Install AWS CLI...
+#     - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.0.30.zip" -o "awscliv2.zip"
+#     - unzip awscliv2.zip 
+#     - sudo ./aws/install 
+#     - which aws
+      - aws --version
+      - echo aws secretsmanager get-secret...
+#2 different styles to get the codebuild`s variable.       
+      - aws secretsmanager get-secret-value --secret-id $secret_id --query SecretString --output text > config.json
+      - export DOCKER_USERNAME=$(jq -r '.DOCKER_USERNAME' config.json)
+      - export DOCKER_PASSWORD=$(jq -r '.DOCKER_PASSWORD' config.json)
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the Docker image...
+      - docker build -t maxrodkin-practical-mlops-chapter1 .
+      - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+      - docker tag maxrodkin-practical-mlops-chapter1 maxi4/maxrodkin-practical-mlops-chapter1
+      - docker push maxi4/maxrodkin-practical-mlops-chapter1
+  post_build:
+    commands:
+      - echo Build completed on `date`
+
+artifacts:
+  files:
+    - '**/*'
+  base-directory: 'build/output'
