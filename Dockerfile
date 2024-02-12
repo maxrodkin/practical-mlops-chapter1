@@ -15,7 +15,7 @@ RUN make install
 RUN make test
 
 # Make port 80 available to the world outside this container
-EXPOSE 80
+EXPOSE 5000
 
 # Run the application when the container launches
-CMD ["python", "main.py"]
+CMD ["python", "http_server.py"]

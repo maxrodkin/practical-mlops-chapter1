@@ -18,11 +18,12 @@ phases:
 #     - sudo ./aws/install 
 #     - which aws
       - aws --version
-      - echo aws secretsmanager get-secret...
+#      - echo "aws secretsmanager get-secret with id=$secret_id..."
 #2 different styles to get the codebuild`s variable.       
-      - aws secretsmanager get-secret-value --secret-id $secret_id --query SecretString --output text > config.json
-      - export DOCKER_USERNAME=$(jq -r '.DOCKER_USERNAME' config.json)
-      - export DOCKER_PASSWORD=$(jq -r '.DOCKER_PASSWORD' config.json)
+#      - aws secretsmanager get-secret-value --secret-id $secret_id --query SecretString --output text > config.json
+#      - export DOCKER_USERNAME=$(jq -r '.DOCKER_USERNAME' config.json)
+#      - export DOCKER_PASSWORD=$(jq -r '.DOCKER_PASSWORD' config.json)
+      - echo "DOCKER_USERNAME and DOCKER_PASSWORD are in CodeBuild env vars"
   build:
     commands:
       - echo Build started on `date`
